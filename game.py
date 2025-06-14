@@ -22,6 +22,7 @@ def main(canvas):
     canvas.nodelay(True)
     max_y, max_x = curses.window.getmaxyx(canvas)
     stars_count = random.randint(70, 90)
+    stars_offset_tics = [random.randint(1, 20) for _ in range(stars_count)]
     coords = generate_unique_coords(max_y, max_x, stars_count)
 
     rocket_animation = []
@@ -34,7 +35,10 @@ def main(canvas):
     controls = {'row': 0, 'column': 0}
     frame_rows, frame_columns = get_frame_size(rocket_animation[0])
 
-    coroutines = [blink(canvas, row, column) for row, column in coords]
+    coroutines = [
+        blink(canvas, row, column, offset_tics)
+        for (row, column), offset_tics in zip(coords, stars_offset_tics)
+    ]
     coroutines.append(fire(canvas, max_y//2, max_x//2))
     coroutines.append(animate_spaceship(
         canvas,

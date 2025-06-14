@@ -24,15 +24,14 @@ async def animate_spaceship(canvas, start_row, start_column, animation, controls
         draw_frame(canvas, row, column, item, negative=True)
 
 
-async def blink(canvas, row, column, symbols='+*.:'):
+async def blink(canvas, row, column, offset_tics, symbols='+*.:'):
     symbol = random.choice(symbols)
     while True:
         canvas.addstr(row, column, symbol, curses.A_DIM)
         for _ in range(20):
             await asyncio.sleep(0)
 
-        random_pause = random.randint(0, 20)
-        for _ in range(random_pause):
+        for _ in range(offset_tics):
             await asyncio.sleep(0)
 
         canvas.addstr(row, column, symbol)
