@@ -12,16 +12,16 @@ async def animate_spaceship(canvas, start_row, start_column, animation, controls
     rows, columns = canvas.getmaxyx()
     frame_rows, frame_columns = get_frame_size(animation[0])
     for item in cycle(animation):
-        row += controls['row']
-        column += controls['column']
-
-        row = max(0, min(row, rows - frame_rows))
-        column = max(0, min(column, columns - frame_columns))
-
-        draw_frame(canvas, row, column, item)
         for _ in range(2):
+            row += controls['row']
+            column += controls['column']
+
+            row = max(0, min(row, rows - frame_rows))
+            column = max(0, min(column, columns - frame_columns))
+
+            draw_frame(canvas, row, column, item)
             await asyncio.sleep(0)
-        draw_frame(canvas, row, column, item, negative=True)
+            draw_frame(canvas, row, column, item, negative=True)
 
 
 async def blink(canvas, row, column, offset_tics, symbols='+*.:'):
