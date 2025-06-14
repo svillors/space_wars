@@ -3,21 +3,25 @@ import curses
 import asyncio
 from itertools import cycle
 
-from curses_tools import draw_frame, get_frame_size
+from curses_tools import draw_frame, get_frame_size, read_controls
 
 
-async def animate_spaceship(canvas, start_row, start_column, animation, controls):
+async def animate_spaceship(canvas, start_row, start_column, animation):
     row = start_row
     column = start_column
     rows, columns = canvas.getmaxyx()
     frame_rows, frame_columns = get_frame_size(animation[0])
     for item in cycle(animation):
         for _ in range(2):
-            row += controls['row']
-            column += controls['column']
-
-            row = max(0, min(row, rows - frame_rows))
-            column = max(0, min(column, columns - frame_columns))
+            controls_row, controls_column, _ = read_controls(canvas)
+            row = max(
+                0,
+                min(row + controls_row, rows - frame_rows)
+            )
+            column = max(
+                0,
+                min(column + controls_column, columns - frame_columns)
+            )
 
             draw_frame(canvas, row, column, item)
             await asyncio.sleep(0)

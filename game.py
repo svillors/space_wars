@@ -4,7 +4,7 @@ import os
 from time import sleep
 
 from game_animations import blink, animate_spaceship, fire
-from curses_tools import get_frame_size, read_controls
+from curses_tools import get_frame_size
 
 
 TIC_TIMEOUT = 0.1
@@ -32,7 +32,6 @@ def main(canvas):
             text = f.read()
             rocket_animation.append(text)
 
-    controls = {'row': 0, 'column': 0}
     frame_rows, frame_columns = get_frame_size(rocket_animation[0])
 
     coroutines = [
@@ -44,15 +43,9 @@ def main(canvas):
         canvas,
         (max_y - frame_rows) // 2,
         (max_x - frame_columns) // 2,
-        rocket_animation,
-        controls
+        rocket_animation
     ))
     while True:
-        row, column, _ = read_controls(canvas)
-        if (frame_rows + row) < max_y and (frame_rows + row) > 0:
-            controls['row'] = row
-        if (frame_columns + column) < max_x and (frame_columns + column) > 0:
-            controls['column'] = column
         for coroutine in coroutines.copy():
             try:
                 coroutine.send(None)
