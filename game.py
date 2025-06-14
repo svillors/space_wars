@@ -53,7 +53,7 @@ def main(canvas):
             controls['row'] = row
         if (frame_columns + column) < max_x and (frame_columns + column) > 0:
             controls['column'] = column
-        for coroutine in coroutines:
+        for coroutine in coroutines.copy():
             try:
                 coroutine.send(None)
             except StopIteration:
