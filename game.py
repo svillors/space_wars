@@ -1,13 +1,15 @@
 import curses
 import random
 import os
+import asyncio
 from time import sleep
 
-from game_animations import blink, animate_spaceship, fire
+from game_animations import blink, animate_spaceship, fire, fly_garbage
 from curses_tools import get_frame_size
 
 
 TIC_TIMEOUT = 0.1
+coroutines = []
 
 
 def generate_unique_coords(max_y, max_x, count):
@@ -15,6 +17,23 @@ def generate_unique_coords(max_y, max_x, count):
         (row, column) for row in range(max_y) for column in range(max_x)
     ]
     return random.sample(all_cells, count)
+
+
+async def fill_orbit_with_garbage(canvas, trash_frames):
+    _, columns = canvas.getmaxyx()
+    while True:
+        trash_count = random.randint(1, 3)
+        frames = random.choices(trash_frames, k=trash_count)
+        for frame in frames:
+            coroutines.append(
+                fly_garbage(
+                    canvas,
+                    random.randint(1, columns),
+                    frame
+                )
+            )
+        for _ in range(10):
+            await asyncio.sleep(0)
 
 
 def main(canvas):
@@ -26,18 +45,22 @@ def main(canvas):
     coords = generate_unique_coords(max_y, max_x, stars_count)
 
     rocket_animation = []
-    for filename in os.listdir('rocket_animation'):
-        file_path = os.path.join('rocket_animation', filename)
-        with open(file_path, 'r', encoding='utf-8') as f:
-            text = f.read()
-            rocket_animation.append(text)
+    trash_frames = []
+    for path, _, filenames in os.walk('frames'):
+        for filename in filenames:
+            with open(os.path.join(path, filename), encoding='utf-8') as f:
+                text = f.read()
+                if filename.startswith('rocket_frame'):
+                    rocket_animation.append(text)
+                else:
+                    trash_frames.append(text)
 
     frame_rows, frame_columns = get_frame_size(rocket_animation[0])
 
-    coroutines = [
+    coroutines.extend(
         blink(canvas, row, column, offset_tics)
         for (row, column), offset_tics in zip(coords, stars_offset_tics)
-    ]
+    )
     coroutines.append(fire(canvas, max_y//2, max_x//2))
     coroutines.append(animate_spaceship(
         canvas,
@@ -45,6 +68,7 @@ def main(canvas):
         (max_x - frame_columns) // 2,
         rocket_animation
     ))
+    coroutines.append(fill_orbit_with_garbage(canvas, trash_frames))
     while True:
         for coroutine in coroutines.copy():
             try:
