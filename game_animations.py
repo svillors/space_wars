@@ -5,6 +5,7 @@ from itertools import cycle
 
 from curses_tools import draw_frame, get_frame_size, read_controls
 from utils import sleep
+from phisics import update_speed
 
 
 async def animate_spaceship(canvas, start_row, start_column, animation):
@@ -12,16 +13,22 @@ async def animate_spaceship(canvas, start_row, start_column, animation):
     column = start_column
     rows, columns = canvas.getmaxyx()
     frame_rows, frame_columns = get_frame_size(animation[0])
+    raw_speed = column_speed = 0
     for item in cycle(animation):
         for _ in range(2):
             controls_row, controls_column, _ = read_controls(canvas)
+            raw_speed, column_speed = update_speed(
+                raw_speed, column_speed, controls_row, controls_column)
             row = max(
                 0,
-                min(row + controls_row, rows - frame_rows)
+                min(row + controls_row + raw_speed, rows - frame_rows)
             )
             column = max(
                 0,
-                min(column + controls_column, columns - frame_columns)
+                min(
+                    column + controls_column + column_speed,
+                    columns - frame_columns
+                )
             )
 
             draw_frame(canvas, row, column, item)
