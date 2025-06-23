@@ -1,11 +1,11 @@
 import curses
 import random
 import os
-import asyncio
-from time import sleep
+import time
 
 from game_animations import blink, animate_spaceship, fire, fly_garbage
 from curses_tools import get_frame_size
+from utils import sleep
 
 
 TIC_TIMEOUT = 0.1
@@ -32,8 +32,7 @@ async def fill_orbit_with_garbage(canvas, trash_frames):
                     frame
                 )
             )
-        for _ in range(10):
-            await asyncio.sleep(0)
+        await sleep(14)
 
 
 def main(canvas):
@@ -76,7 +75,7 @@ def main(canvas):
             except StopIteration:
                 coroutines.remove(coroutine)
         canvas.refresh()
-        sleep(TIC_TIMEOUT)
+        time.sleep(TIC_TIMEOUT)
 
 
 if __name__ == '__main__':

@@ -4,6 +4,7 @@ import asyncio
 from itertools import cycle
 
 from curses_tools import draw_frame, get_frame_size, read_controls
+from utils import sleep
 
 
 async def animate_spaceship(canvas, start_row, start_column, animation):
@@ -32,23 +33,17 @@ async def blink(canvas, row, column, offset_tics, symbols='+*.:'):
     symbol = random.choice(symbols)
     while True:
         canvas.addstr(row, column, symbol, curses.A_DIM)
-        for _ in range(20):
-            await asyncio.sleep(0)
-
-        for _ in range(offset_tics):
-            await asyncio.sleep(0)
+        await sleep(20)
+        await sleep(offset_tics)
 
         canvas.addstr(row, column, symbol)
-        for _ in range(3):
-            await asyncio.sleep(0)
+        await sleep(3)
 
         canvas.addstr(row, column, symbol, curses.A_BOLD)
-        for _ in range(5):
-            await asyncio.sleep(0)
+        await sleep(5)
 
         canvas.addstr(row, column, symbol)
-        for _ in range(3):
-            await asyncio.sleep(0)
+        await sleep(3)
 
 
 async def fire(canvas, start_row, start_column, rows_speed=-0.3, columns_speed=0):
