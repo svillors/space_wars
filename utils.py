@@ -2,6 +2,8 @@ import asyncio
 
 
 coroutines = []
+obstacles = []
+obstacles_in_last_collisions = []
 
 
 async def sleep(tics=1):
