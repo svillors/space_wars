@@ -3,13 +3,12 @@ import random
 import os
 import time
 
-from game_animations import blink, animate_spaceship, fire, fly_garbage
+from game_animations import blink, animate_spaceship, fly_garbage
 from curses_tools import get_frame_size
-from utils import sleep
+from utils import sleep, coroutines
 
 
 TIC_TIMEOUT = 0.1
-coroutines = []
 
 
 def generate_unique_coords(max_y, max_x, count):
@@ -60,7 +59,6 @@ def main(canvas):
         blink(canvas, row, column, offset_tics)
         for (row, column), offset_tics in zip(coords, stars_offset_tics)
     )
-    coroutines.append(fire(canvas, max_y//2, max_x//2))
     coroutines.append(animate_spaceship(
         canvas,
         (max_y - frame_rows) // 2,

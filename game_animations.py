@@ -4,7 +4,7 @@ import asyncio
 from itertools import cycle
 
 from curses_tools import draw_frame, get_frame_size, read_controls
-from utils import sleep
+from utils import sleep, coroutines
 from phisics import update_speed
 
 
@@ -16,7 +16,7 @@ async def animate_spaceship(canvas, start_row, start_column, animation):
     raw_speed = column_speed = 0
     for item in cycle(animation):
         for _ in range(2):
-            controls_row, controls_column, _ = read_controls(canvas)
+            controls_row, controls_column, space_pressed = read_controls(canvas)
             raw_speed, column_speed = update_speed(
                 raw_speed, column_speed, controls_row, controls_column)
             row = max(
@@ -32,6 +32,17 @@ async def animate_spaceship(canvas, start_row, start_column, animation):
             )
 
             draw_frame(canvas, row, column, item)
+
+            if space_pressed:
+                coroutines.append(
+                    fire(
+                        canvas,
+                        row,
+                        column + frame_columns // 2,
+                        rows_speed=-2
+                    )
+                )
+
             await asyncio.sleep(0)
             draw_frame(canvas, row, column, item, negative=True)
 
