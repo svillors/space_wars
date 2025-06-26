@@ -47,6 +47,15 @@ async def animate_spaceship(canvas, start_row, start_column, animation):
 
             await asyncio.sleep(0)
             draw_frame(canvas, row, column, item, negative=True)
+            for obstacle in obstacles:
+                if obstacle.has_collision(
+                        row, column, frame_rows, frame_columns):
+                    rows_center = row + frame_rows // 2
+                    columns_center = column + frame_columns // 2
+                    coroutines.append(
+                        explode(canvas, rows_center, columns_center))
+                    coroutines.append(show_gameover(canvas))
+                    return
 
 
 async def blink(canvas, row, column, offset_tics, symbols='+*.:'):
@@ -127,3 +136,20 @@ async def fly_garbage(canvas, column, garbage_frame, speed=0.5):
                 break
     finally:
         obstacles.remove(obstacle)
+
+
+async def show_gameover(canvas):
+    rows_number, columns_number = canvas.getmaxyx()
+    text = """
+ ██████   █████  ███    ███ ███████      ██████  ██    ██ ███████ ██████  
+██       ██   ██ ████  ████ ██          ██    ██ ██    ██ ██      ██   ██ 
+██   ███ ███████ ██ ████ ██ █████       ██    ██ ██    ██ █████   ██████  
+██    ██ ██   ██ ██  ██  ██ ██          ██    ██  ██  ██  ██      ██   ██ 
+ ██████  ██   ██ ██      ██ ███████      ██████    ████   ███████ ██   ██ 
+"""
+    frame_rows, frame_columns = get_frame_size(text)
+    start_row = (rows_number - frame_rows) // 2
+    start_column = (columns_number - frame_columns) // 2
+    while True:
+        draw_frame(canvas, start_row, start_column, text)
+        await sleep()
