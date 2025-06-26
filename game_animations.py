@@ -7,6 +7,7 @@ from curses_tools import draw_frame, get_frame_size, read_controls
 from utils import sleep, coroutines, obstacles, obstacles_in_last_collisions
 from obstacles import Obstacle
 from phisics import update_speed
+from explosion import explode
 
 
 async def animate_spaceship(canvas, start_row, start_column, animation):
@@ -120,6 +121,9 @@ async def fly_garbage(canvas, column, garbage_frame, speed=0.5):
             obstacle.row = row
             if obstacle in obstacles_in_last_collisions:
                 obstacles_in_last_collisions.remove(obstacle)
+                rows_center = row + frame_rows // 2
+                columns_center = column + frame_columns // 2
+                await explode(canvas, rows_center, columns_center)
                 break
     finally:
         obstacles.remove(obstacle)
