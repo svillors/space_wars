@@ -4,7 +4,7 @@ import asyncio
 from itertools import cycle
 
 from curses_tools import draw_frame, get_frame_size, read_controls
-from utils import sleep, coroutines, obstacles, obstacles_in_last_collisions
+from utils import sleep, coroutines, obstacles, obstacles_in_last_collisions, year
 from obstacles import Obstacle
 from phisics import update_speed
 from explosion import explode
@@ -35,15 +35,16 @@ async def animate_spaceship(canvas, start_row, start_column, animation):
 
             draw_frame(canvas, row, column, item)
 
-            if space_pressed:
-                coroutines.append(
-                    fire(
-                        canvas,
-                        row,
-                        column + frame_columns // 2,
-                        rows_speed=-2
+            if year >= 2020:
+                if space_pressed:
+                    coroutines.append(
+                        fire(
+                            canvas,
+                            row,
+                            column + frame_columns // 2,
+                            rows_speed=-2
+                        )
                     )
-                )
 
             await asyncio.sleep(0)
             draw_frame(canvas, row, column, item, negative=True)
