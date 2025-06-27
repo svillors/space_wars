@@ -13,9 +13,18 @@ pip install windows-curses
 python3 game.py
 ```
 
-### controls
+### Controls
 | Key	 | Action |
 |----------|----------|
 | ← ↑ ↓ →  | Move spaceship |
 | Ctrl-C   | Quit  |
+| spacebar | shoot |
+
+## How the Game Works
+
+The game begins in the year 1957, during the dawn of the space age. At first, the sky is peaceful and quiet. 
+
+Starting from 1961, space debris begins to appear and fall from the top of the screen. You must dodge the garbage using your spaceship — if you collide with it, the game is over.
+
+In the year 2020, a new feature is unlocked: you gain access to a plasma gun that allows you to shoot down the space garbage.
 
