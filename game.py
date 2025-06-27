@@ -5,7 +5,7 @@ import time
 
 from game_animations import blink, animate_spaceship, fly_garbage
 from curses_tools import get_frame_size
-from utils import sleep, coroutines
+from utils import sleep, get_garbage_delay_tics, draw_year, coroutines, year
 
 
 TIC_TIMEOUT = 0.1
@@ -18,9 +18,21 @@ def generate_unique_coords(max_y, max_x, count):
     return random.sample(all_cells, count)
 
 
+async def time_control(canvas):
+    global year
+    while True:
+        year += 1
+        draw_year(canvas, year)
+        await sleep(15)
+
+
 async def fill_orbit_with_garbage(canvas, trash_frames):
     _, columns = canvas.getmaxyx()
     while True:
+        tics = get_garbage_delay_tics(year)
+        if not tics:
+            await sleep(5)
+            continue
         trash_count = random.randint(1, 3)
         frames = random.choices(trash_frames, k=trash_count)
         for frame in frames:
@@ -31,7 +43,7 @@ async def fill_orbit_with_garbage(canvas, trash_frames):
                     frame
                 )
             )
-        await sleep(14)
+        await sleep(tics)
 
 
 def main(canvas):
@@ -66,6 +78,7 @@ def main(canvas):
         rocket_animation
     ))
     coroutines.append(fill_orbit_with_garbage(canvas, trash_frames))
+    coroutines.append(time_control(canvas))
     while True:
         for coroutine in coroutines.copy():
             try:
