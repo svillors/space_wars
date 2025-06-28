@@ -36,7 +36,7 @@ def get_garbage_delay_tics(year):
 
 def draw_year(canvas, years):
     rows, _ = canvas.getmaxyx()
-    window = canvas.derwin(1, 50, rows - 1, 0)
+    window = canvas.derwin(1, 80, rows - 1, 0)
     window.clear()
     window.addstr(
         0,
